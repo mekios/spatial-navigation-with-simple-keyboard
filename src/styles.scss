@@ -1,1 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'simple-keyboard/build/css/index.css';
+
+.keyboardHolder{
+    display:none;
+    width:800px;
+    position:absolute;
+    top:70px;
+    left:0;
+    z-index: 10;
+    
+    &.active{
+        display: block;
+    }
+}
+
+.position-relative{
+    position:relative;
+}
+
+.hg-theme-default .hg-button span {
+    pointer-events: none;
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.hg-theme-default .hg-button{
+    height:80px;
+    &:focus{
+        border:2px solid red;
+    }
+}
+
+input{
+    font-size:40px;
+    margin:10px;
+    &:focus{
+        border:5px solid red;
+    }
+}
+
+.hg-button-space {
+    width: 428px;
+    
+}
