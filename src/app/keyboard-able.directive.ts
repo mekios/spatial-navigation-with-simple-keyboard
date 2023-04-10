@@ -49,13 +49,13 @@ export class KeyboardAbleDirective {
           "q w e r t y u i o p",
           "a s d f g h j k l",
           "{shift} z x c v b n m {backspace}",
-          "{numbers} @ . {space} {ent}"
+          "{numbers} @ . {space} {arrowleft} {arrowright} {ent}"
         ],
         shift: [
           "Q W E R T Y U I O P",
           "A S D F G H J K L",
           "{shift} Z X C V B N M {backspace}",
-          "{numbers} @ . {space} {ent}"
+          "{numbers} @ . {space} {arrowleft} {arrowright} {ent}"
         ],
         numbers: ["1 2 3", "4 5 6", "7 8 9", "{abc} 0 {backspace}"]
       },
@@ -76,6 +76,8 @@ export class KeyboardAbleDirective {
         "{numbers}" : "123",
         "{space}":" ",
         "{abc}":"ABC",
+        "{arrowright}":"→",
+        "{arrowleft}":"←"
       }
     });
     
@@ -140,6 +142,7 @@ export class KeyboardAbleDirective {
     this.keyboard.setOptions({
       layoutName: shiftToggle
     });
+    this.spatial.SN.focus('keyboardKeys_'+this.element.nativeElement.name);  
   };
 
   handleNumbers = () => {
@@ -149,6 +152,7 @@ export class KeyboardAbleDirective {
     this.keyboard.setOptions({
       layoutName: shiftToggle
     });
+    this.spatial.SN.focus('keyboardKeys_'+this.element.nativeElement.name);  
   }
   
 } 
