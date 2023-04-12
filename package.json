@@ -20,6 +20,7 @@
     "@angular/router": "~13.2.0",
     "rxjs": "~7.5.0",
     "simple-keyboard": "^3.5.46",
+    "simple-keyboard-key-navigation": "^2.4.246",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

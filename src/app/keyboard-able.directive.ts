@@ -3,6 +3,7 @@ import { KeyboardComponent } from './keyboard/keyboard.component';
 import Keyboard from 'simple-keyboard';
 import { SpatialNavService } from './spatial-nav.service';
 import { KeyboardHandlerEvent } from 'simple-keyboard/build/interfaces';
+import keyNavigation from "simple-keyboard-key-navigation";
 
 
 @Directive({
@@ -21,17 +22,10 @@ export class KeyboardAbleDirective {
   holder:any;
   holderDiv:HTMLDivElement=<HTMLDivElement>(document.createElement('div'));
   keyboard:any
+  active=false;
   keybordDiv:HTMLDivElement=<HTMLDivElement>(document.createElement('div'));
   ngOnInit() {
-    Keyboard.prototype.handleKeyUp=function (event: KeyboardHandlerEvent): void {
-      console.log(event);
-      if(event.key==='Enter'){
-     this.caretEventHandler(event);
-      
-        
-      }
-      //this.handleMouseUp(event);
-    }
+   
     this.element.nativeElement.parentNode.classList.add('position-relative');
     this.keybordDiv.classList.add('simple-keyboard-'+this.element.nativeElement.name);   
     this.holderDiv.classList.add('keyboardHolder');
@@ -42,8 +36,25 @@ export class KeyboardAbleDirective {
       onChange: (input: string)  => this.onChange(input),
       onKeyPress: (button: string) => this.onKeyPress(button),    
       useButtonTag :true,
-      useMouseEvents: true,
-      debug:true,  
+      enableKeyNavigation:true,
+      debug:false,  
+      onModulesLoaded: keyboard => {
+        document.addEventListener(
+          "keydown",
+          (e) => {
+            if (e.key === "ArrowUp" && this.active) this.keyboard.modules.keyNavigation.up();
+            else if (e.key === "ArrowDown" && this.active) this.keyboard.modules.keyNavigation.down();
+            else if (e.key === "ArrowLeft" && this.active) this.keyboard.modules.keyNavigation.left();
+            else if (e.key === "ArrowRight" && this.active) this.keyboard.modules.keyNavigation.right();
+            else if (e.key === "Enter" && this.active) this.keyboard.modules.keyNavigation.press();
+          },
+          false
+        );
+      },
+      modules: [
+        keyNavigation
+      ],
+
       layout: {
         default: [
           "q w e r t y u i o p",
@@ -94,12 +105,17 @@ export class KeyboardAbleDirective {
   @HostListener("keydown", ["$event"]) showKeyboard(event: KeyboardEvent) {
     console.log(event);
     if(event.key=='Enter'){
+      setTimeout(()=>{
       this.holderDiv.classList.add('active');
+      
       //this.element.nativeElement.addEventListener('blur',this.hideKeyboard())  
       this.spatial.SN.add('keyboardKeys_'+this.element.nativeElement.name,{selector: '.simple-keyboard-'+this.element.nativeElement.name+' .hg-button', restrict: 'self-only',rememberSource:true});
       this.spatial.SN.focus('keyboardKeys_'+this.element.nativeElement.name);  
+      this.keyboard.modules.keyNavigation.setMarker(0,0)
+      this.active=true;
       console.log('focus');
-      
+      },100)
+
     }
   } 
 
@@ -118,7 +134,7 @@ export class KeyboardAbleDirective {
 
   onKeyPress = (button: string) => {
     console.log("Button pressed", button);
-
+    
     /**
      * If you want to handle the shift and caps lock buttons
      */
@@ -129,6 +145,8 @@ export class KeyboardAbleDirective {
       console.log('hide');
       this.spatial.SN.remove('keyboardKeys_'+this.element.nativeElement.name);
       this.spatial.SN.focus(this.element.nativeElement)
+      this.active=false;
+      this.keyboard.modules.keyNavigation.setMarker(0,0)
     }
     if(button === "{numbers}" || button === "{abc}"){
       this.handleNumbers();
@@ -143,16 +161,21 @@ export class KeyboardAbleDirective {
       layoutName: shiftToggle
     });
     this.spatial.SN.focus('keyboardKeys_'+this.element.nativeElement.name);  
+    this.keyboard.modules.keyNavigation.setMarker(0,0)
   };
 
   handleNumbers = () => {
+
     let currentLayout = this.keyboard.options.layoutName;
+
     let shiftToggle = currentLayout === "default" ? "numbers" : "default";
 
     this.keyboard.setOptions({
       layoutName: shiftToggle
     });
     this.spatial.SN.focus('keyboardKeys_'+this.element.nativeElement.name);  
+    this.keyboard.modules.keyNavigation.setMarker(0,0)
   }
   
+
 } 
